@@ -1359,3 +1359,67 @@ def test_mets_dnx_with_pm_and_ad_for_phys_structmap_labels():
             '{http://www.loc.gov/METS/}div').attrib['LABEL']
     print(mm_structmap_label)
     assert(mm_structmap_label == "Modified Master")
+
+def test_build_mets_with_exclude_file_char():
+    """Test adding exclude_file_char parameter.
+    """
+    ie_dc_dict = {"dc:title": "test title"}
+    mets = mdf.build_mets(
+        ie_dmd_dict=ie_dc_dict,
+        pres_master_dir=os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            'data',
+            'test_batch_1',
+            'pm'),
+        modified_master_dir=os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            'data',
+            'test_batch_1',
+            'mm'),
+        input_dir=os.path.join(os.path.dirname(
+            os.path.realpath(__file__)),
+            'data',
+            'test_batch_1'),
+        generalIECharacteristics=[{
+            'submissionReason': 'bornDigitalContent',
+            'IEEntityType': 'periodicIE'}],
+        digital_original=True,
+        exclude_file_char = ['fileOriginalPath','fileSizeBytes', 'fileModificationDate','fileCreationDate'],
+        )
+    file_original_path = mets.find('.//key[@id="fileOriginalPath"]')
+    file_size_bytes = mets.find('.//key[@id="fileSizeBytes"]')
+    file_mod_date = mets.find('.//key[@id="fileModificationDate"]')
+    file_creat_date = mets.find('.//key[@id="fileCreationDate"]')
+
+    assert file_original_path is None
+    assert file_size_bytes is None
+    assert file_mod_date is None
+    assert file_creat_date is None
+
+def test_single_file_mets_with_exclude_file_char():
+    """Test single file mets funcion with new parameter "exclude_file_char()"""
+    ie_dc_dict = {"dc:title": "test title"}
+    mets = mdf.build_single_file_mets(
+        ie_dmd_dict=ie_dc_dict,
+        filepath=os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            'data',
+            'test_batch_1',
+            'pm',
+            'presmaster.jpg'),
+        generalIECharacteristics=[{
+            'submissionReason': 'bornDigitalContent',
+            'IEEntityType': 'periodicIE'}],
+        exclude_file_char = ['fileOriginalPath','fileSizeBytes', 'fileModificationDate','fileCreationDate'],
+
+        )
+
+    file_original_path = mets.find('.//key[@id="fileOriginalPath"]')
+    file_size_bytes = mets.find('.//key[@id="fileSizeBytes"]')
+    file_mod_date = mets.find('.//key[@id="fileModificationDate"]')
+    file_creat_date = mets.find('.//key[@id="fileCreationDate"]')
+
+    assert file_original_path is None
+    assert file_size_bytes is None
+    assert file_mod_date is None
+    assert file_creat_date is None
