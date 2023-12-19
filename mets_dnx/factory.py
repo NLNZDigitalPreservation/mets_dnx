@@ -159,7 +159,8 @@ def build_mets(ie_dmd_dict=None,
                 eventList=None,
                 input_dir=None,
                 digital_original=False,
-                structmap_type='DEFAULT'):
+                structmap_type='DEFAULT', 
+                exclude_file_characteristics = []):
 
     mets = mf.build_mets()
 
@@ -247,6 +248,10 @@ def build_mets(ie_dmd_dict=None,
                 'fileCreationDate': created_time,
                 'fileOriginalName': file_original_name,
                 'label': file_label}]
+            if exclude_file_characteristics!=[]:
+                for file_characteristics in exclude_file_characteristics:
+                    if file_characteristics in general_file_characteristics[0].keys():
+                        general_file_characteristics[0].pop(file_characteristics)
 
             file_fixity =  [{
                 'fixityType': 'MD5',
@@ -322,7 +327,8 @@ def build_single_file_mets(ie_dmd_dict=None,
                 objectIdentifier=None,
                 accessRightsPolicy=None,
                 eventList=None,
-                digital_original=False):
+                digital_original=False,
+                exclude_file_characteristics = []):
     mets = mf.build_mets()
     _build_ie_dmd_amd(mets,
             ie_dmd_dict=ie_dmd_dict,
@@ -371,7 +377,10 @@ def build_single_file_mets(ie_dmd_dict=None,
         'fileCreationDate': created_time,
         'fileOriginalName': file_original_name,
         'label': file_label}]
-
+    if exclude_file_characteristics!=[]:
+        for file_characteristics in exclude_file_characteristics:
+            if file_characteristics in general_file_characteristics[0].keys():
+                general_file_characteristics[0].pop(file_characteristics)
     file_fixity =  [{
         'fixityType': 'MD5',
         'fixityValue': generate_md5(file_original_location)}]
