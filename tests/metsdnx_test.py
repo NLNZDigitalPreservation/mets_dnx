@@ -1360,8 +1360,8 @@ def test_mets_dnx_with_pm_and_ad_for_phys_structmap_labels():
     print(mm_structmap_label)
     assert(mm_structmap_label == "Modified Master")
 
-def test_build_mets_with_exclude_file_char():
-    """Test adding exclude_file_char parameter.
+def test_build_mets_with_exclude_file_characteristics():
+    """Test adding exclude_file_characteristics parameter.
     """
     ie_dc_dict = {"dc:title": "test title"}
     mets = mdf.build_mets(
@@ -1384,7 +1384,7 @@ def test_build_mets_with_exclude_file_char():
             'submissionReason': 'bornDigitalContent',
             'IEEntityType': 'periodicIE'}],
         digital_original=True,
-        exclude_file_char = ['fileOriginalPath','fileSizeBytes', 'fileModificationDate','fileCreationDate'],
+        exclude_file_characteristics = ['fileOriginalPath','fileSizeBytes', 'fileModificationDate','fileCreationDate'],
         )
     file_original_path = mets.find('.//key[@id="fileOriginalPath"]')
     file_size_bytes = mets.find('.//key[@id="fileSizeBytes"]')
@@ -1396,8 +1396,8 @@ def test_build_mets_with_exclude_file_char():
     assert file_mod_date is None
     assert file_creat_date is None
 
-def test_single_file_mets_with_exclude_file_char():
-    """Test single file mets funcion with new parameter "exclude_file_char()"""
+def test_single_file_mets_with_exclude_file_characteristics():
+    """Test single file mets funcion with new parameter "exclude_file_characteristics()"""
     ie_dc_dict = {"dc:title": "test title"}
     mets = mdf.build_single_file_mets(
         ie_dmd_dict=ie_dc_dict,
@@ -1410,7 +1410,7 @@ def test_single_file_mets_with_exclude_file_char():
         generalIECharacteristics=[{
             'submissionReason': 'bornDigitalContent',
             'IEEntityType': 'periodicIE'}],
-        exclude_file_char = ['fileOriginalPath','fileSizeBytes', 'fileModificationDate','fileCreationDate'],
+        exclude_file_characteristics = ['fileOriginalPath','fileSizeBytes', 'fileModificationDate','fileCreationDate'],
 
         )
 
