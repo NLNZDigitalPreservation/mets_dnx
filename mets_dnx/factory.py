@@ -37,16 +37,21 @@ def build_amdsec(amdsec, tech_sec=None, rights_sec=None,
                     amdsec,
                     "{http://www.loc.gov/METS/}rightsMD",
                     ID=amd_id + "-rights")
-    amd_source = ET.SubElement(
-                    amdsec,
-                    "{http://www.loc.gov/METS/}sourceMD",
-                    ID=amd_id + "-source")
+    if source_sec != None:
+        amd_source = ET.SubElement(
+                        amdsec,
+                        "{http://www.loc.gov/METS/}sourceMD",
+                        ID=amd_id + "-source")
     amd_digiprov = ET.SubElement(
                     amdsec,
                     "{http://www.loc.gov/METS/}digiprovMD",
                     ID=amd_id + "-digiprov")
-
-    for el in [amd_tech, amd_rights, amd_source, amd_digiprov]:
+    
+    if source_sec == None:
+        el_list = [amd_tech, amd_rights, amd_digiprov]
+    else:
+        el_list = [amd_tech, amd_rights, amd_source, amd_digiprov]
+    for el in el_list:
         mdWrap = ET.SubElement(
                         el,
                         "{http://www.loc.gov/METS/}mdWrap",
@@ -71,10 +76,10 @@ def build_amdsec(amdsec, tech_sec=None, rights_sec=None,
         if (el.tag == "{http://www.loc.gov/METS/}sourceMD" and
                 source_sec != None):
             xmlData.append(source_sec)
-        elif (el.tag == "{http://www.loc.gov/METS/}sourceMD" and
-                source_sec == None):
-            xmlData.append(ET.Element("dnx",
-                xmlns="http://www.exlibrisgroup.com/dps/dnx"))
+        # elif (el.tag == "{http://www.loc.gov/METS/}sourceMD" and
+        #         source_sec == None):
+        #     xmlData.append(ET.Element("dnx",
+        #         xmlns="http://www.exlibrisgroup.com/dps/dnx"))
 
         if (el.tag == "{http://www.loc.gov/METS/}digiprovMD" and
                 digiprov_sec != None):
@@ -159,7 +164,8 @@ def build_mets(ie_dmd_dict=None,
                 eventList=None,
                 input_dir=None,
                 digital_original=False,
-                structmap_type='DEFAULT'):
+                structmap_type='DEFAULT', 
+                exclude_file_characteristics = []):
 
     mets = mf.build_mets()
 
@@ -206,7 +212,7 @@ def build_mets(ie_dmd_dict=None,
 
         rep_amdsec = mets.xpath("//mets:amdSec[@ID='%s']" %
                 str(rep_id + '-amd'), namespaces=mets.nsmap)[0]
-        general_rep_characteristics = [{'RevisionNumber': '1',
+        general_rep_characteristics = [{#'RevisionNumber': '1',
                 'DigitalOriginal': str(digital_original).lower(),
                 'usageType': 'VIEW',
                 'preservationType': pres_type}]
@@ -241,12 +247,17 @@ def build_mets(ie_dmd_dict=None,
                     "%Y-%m-%dT%H:%M:%S",
                     time.localtime(os.path.getctime(file_original_location)))
             general_file_characteristics = [{
-                'fileOriginalPath': file_original_location,
+                # 'fileOriginalPath': file_original_location,
                 'fileSizeBytes': str(file_size_bytes),
-                'fileModificationDate': last_modified,
-                'fileCreationDate': created_time,
+                # 'fileModificationDate': last_modified,
+                # 'fileCreationDate': created_time,
                 'fileOriginalName': file_original_name,
-                'label': file_label}]
+                'label': file_label,
+                'fileMIMEType': "text/plain",}]
+            if exclude_file_characteristics!=[]:
+                for file_characteristics in exclude_file_characteristics:
+                    if file_characteristics in general_file_characteristics[0].keys():
+                        general_file_characteristics[0].pop(file_characteristics)
 
             file_fixity =  [{
                 'fixityType': 'MD5',
@@ -322,7 +333,8 @@ def build_single_file_mets(ie_dmd_dict=None,
                 objectIdentifier=None,
                 accessRightsPolicy=None,
                 eventList=None,
-                digital_original=False):
+                digital_original=False,
+                exclude_file_characteristics = []):
     mets = mf.build_mets()
     _build_ie_dmd_amd(mets,
             ie_dmd_dict=ie_dmd_dict,
@@ -371,7 +383,10 @@ def build_single_file_mets(ie_dmd_dict=None,
         'fileCreationDate': created_time,
         'fileOriginalName': file_original_name,
         'label': file_label}]
-
+    if exclude_file_characteristics!=[]:
+        for file_characteristics in exclude_file_characteristics:
+            if file_characteristics in general_file_characteristics[0].keys():
+                general_file_characteristics[0].pop(file_characteristics)
     file_fixity =  [{
         'fixityType': 'MD5',
         'fixityValue': generate_md5(file_original_location)}]
