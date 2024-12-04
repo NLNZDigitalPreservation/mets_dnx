@@ -142,10 +142,10 @@ def _build_ie_dmd_amd(mets,
     ie_amd_source = None
     build_amdsec(
             ie_amdsec,
-            ie_amd_tech,
-            ie_amd_rights,
-            ie_amd_digiprov,
-            ie_amd_source)
+            tech_sec=ie_amd_tech,
+            rights_sec=ie_amd_rights,
+            digiprov_sec=ie_amd_digiprov,
+            source_sec=ie_amd_source)
 
 def build_mets(ie_dmd_dict=None,
                 pres_master_dir=None,
