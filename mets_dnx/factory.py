@@ -290,17 +290,14 @@ def build_mets(
             "rep([0-9]+)\-file([0-9]+)", r"fid\2-\1", element.attrib["ID"]
         )
     for element in mets.xpath(".//*[@ADMID]"):
+        element.attrib["ADMID"] = re.sub("ie[0-9]+\-", "", element.attrib["ADMID"])
         element.attrib["ADMID"] = re.sub(
-            "ie[0-9]+\-rep([0-9]+)\-file([0-9]+)-amd",
-            r"fid\2-\1-amd",
-            element.attrib["ADMID"],
-        )
-        element.attrib["ADMID"] = re.sub(
-            "ie[0-9]+\-rep([0-9]+)-amd", r"rep\1-amd", element.attrib["ADMID"]
+            "rep([0-9]+)\-file([0-9]+)", r"fid\2-\1", element.attrib["ADMID"]
         )
     for element in mets.xpath(".//*[@FILEID]"):
+        element.attrib["FILEID"] = re.sub("ie[0-9]+\-", "", element.attrib["FILEID"])
         element.attrib["FILEID"] = re.sub(
-            "ie[0-9]+\-rep([0-9])+\-file([0-9]+)", r"fid\2-\1", element.attrib["FILEID"]
+            "rep([0-9]+)\-file([0-9]+)", r"fid\2-\1", element.attrib["FILEID"]
         )
 
     # 2017-02-16 (SM): Modify the file label in the structmaps so that it does
