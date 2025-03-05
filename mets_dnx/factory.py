@@ -258,8 +258,8 @@ def build_mets(
                 {
                     # 'fileOriginalPath': file_original_location,
                     "fileSizeBytes": str(file_size_bytes),
-                    "fileModificationDate": last_modified,
-                    "fileCreationDate": created_time,
+                    # 'fileModificationDate': last_modified,
+                    # 'fileCreationDate': created_time,
                     "fileOriginalName": file_original_name,
                     "label": file_label,
                     "fileMIMEType": "text/plain",
@@ -290,11 +290,23 @@ def build_mets(
             "rep([0-9]+)\-file([0-9]+)", r"fid\2-\1", element.attrib["ID"]
         )
     for element in mets.xpath(".//*[@ADMID]"):
+        # element.attrib['ADMID'] = re.sub(
+        #         'ie[0-9]+\-rep([0-9]+)\-file([0-9]+)-amd',
+        #         r'fid\2-\1-amd',
+        #         element.attrib['ADMID'])
+        # element.attrib['ADMID'] = re.sub(
+        #         'ie[0-9]+\-rep([0-9]+)-amd',
+        #         r'rep\1-amd',
+        #         element.attrib['ADMID'])
         element.attrib["ADMID"] = re.sub("ie[0-9]+\-", "", element.attrib["ADMID"])
         element.attrib["ADMID"] = re.sub(
             "rep([0-9]+)\-file([0-9]+)", r"fid\2-\1", element.attrib["ADMID"]
         )
     for element in mets.xpath(".//*[@FILEID]"):
+        # element.attrib['FILEID'] = re.sub(
+        #         'ie[0-9]+\-rep([0-9])+\-file([0-9]+)',
+        #         r'fid\2-\1',
+        #         element.attrib['FILEID'])
         element.attrib["FILEID"] = re.sub("ie[0-9]+\-", "", element.attrib["FILEID"])
         element.attrib["FILEID"] = re.sub(
             "rep([0-9]+)\-file([0-9]+)", r"fid\2-\1", element.attrib["FILEID"]
@@ -330,7 +342,8 @@ def build_mets(
                 './/{http://www.loc.gov/METS/}div[@TYPE="FILE"]'
             )
             for file_div in file_divs:
-                file_div.attrib["LABEL"] = os.path.splitext(file_div.attrib["LABEL"])[0]
+                # file_div.attrib["LABEL"] = os.path.splitext(file_div.attrib["LABEL"])[0]
+                file_div.attrib["LABEL"] = file_div.attrib["LABEL"].split(".")[0]
 
     mets = _check_structmaps(mets, structmap_type)
     return mets
